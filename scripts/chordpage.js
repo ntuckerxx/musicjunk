@@ -14,7 +14,10 @@ requirejs(["midilistener", "keyboardstate"], function(MidiListener, KeyboardStat
     // pass the array of key numbers to chordIdentifier and showDisplay() the result
     function update(keystates, knobstates, sliderstates) {
         keys = [];
+        $(".piano *").removeClass("pressed")
         for(var k in keystates) {
+            var keySelector = `.key${k%12}`
+            $(keySelector).addClass("pressed");
             keys.push(k);
         }
 
@@ -33,7 +36,7 @@ requirejs(["midilistener", "keyboardstate"], function(MidiListener, KeyboardStat
     }
     // change the size and color of the display text
     function changeStyle(sizeval, r, g, b) {
-        sizeFactor = (sizeval + 10) / 64;
+        sizeFactor = (sizeval + 10) / 32;
         $(".displayText").css("font-size", (sizeFactor*100) + "%");
         $(".displayText").css("color", `rgb(${r*2},${g*2},${b*2})`);
     }

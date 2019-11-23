@@ -16,6 +16,51 @@
                 text-align: center;
                 width: 100%;
             }
+            .piano {
+                position: absolute;
+                top: 20px;
+                left: 10px;
+            }
+            .whitekey {
+                position: absolute;
+                border-width: 1px 1px 1px 0px;
+                border-style: solid;
+                border-color: black;
+                width: 25px;
+                height: 100px;
+                display: inline-block;
+                margin: 0;
+            }
+            .whitekeyholder :first-child {
+                border-left-width: 1px;
+            }
+            .blackkey {
+                position: absolute;
+                left: 38px;
+                top: 0;
+                background-color: black;
+                width: 12px;
+                height: 60px;
+                display: inline-block;
+                margin: 0;
+            }
+            .blackkey.pressed, .whitekey.pressed {
+                background-color: #FE80A0;
+                border: 1px solid black;
+            }
+            .key0 { left: 0; border-left-width: 1px; }
+            .key2 { left: 25px; }
+            .key4 { left: 50px; }
+            .key5 { left: 75px; }
+            .key7 { left: 100px; }
+            .key9 { left: 125px; }
+            .key11 { left: 150px; }
+            .key1 { left: 20px; }
+            .key3 { left: 45px; }
+            .key6 { left: 95px; }
+            .key8 { left: 120px; }
+            .key10 { left: 145px; }
+
         </style>
         <script src="scripts/jquery.js"></script>
         <script data-main="scripts/chordpage" src="scripts/require.js"></script>
@@ -26,6 +71,20 @@
         </div>
         <div class="display">
             <span class="displayText">--</span>
+        </div>
+        <div class="piano">
+            <div class="whitekey key0"></div>
+            <div class="whitekey key2"></div>
+            <div class="whitekey key4"></div>
+            <div class="whitekey key5"></div>
+            <div class="whitekey key7"></div>
+            <div class="whitekey key9"></div>
+            <div class="whitekey key11"></div>
+            <div class="blackkey key1"></div>
+            <div class="blackkey key3"></div>
+            <div class="blackkey key6"></div>
+            <div class="blackkey key8"></div>
+            <div class="blackkey key10"></div>
         </div>
     </body>
 </html>
