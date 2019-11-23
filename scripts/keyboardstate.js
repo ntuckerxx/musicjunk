@@ -11,15 +11,26 @@ define(function(require, exports, module) {
             super();
 
             this.keystates = [];
+            this.knobs = [64,64,64,64,64,64,64,64];
+            this.sliders = [0,0,0,0,0,0,0,0];
             this.ml = new MidiListener()
             this.ml.addEventListener("midi", function(e) {
                 var data = e.detail.data;
+
                 if(data[0] == 144) {
                     this.keydown(data[1]);
                 } else if(data[0] == 128) {
                     this.keyup(data[1]);
+                } else if(data[0] == 176 && (data[1] >= 21 && data[1] <= 28)) {
+                    var knobNum = data[1] - 21;
+                    this.knobs[knobNum] = data[2];
+                    this.update();
+                } else if(data[0] == 176 && (data[1] >= 41 && data[1] <= 48)) {
+                    var sliderNum = data[1] - 41;
+                    this.sliders[sliderNum] = data[2];
+                    this.update();
                 }
-            }.bind(this));
+        }.bind(this));
         }
         
         keydown(k) {
@@ -31,7 +42,12 @@ define(function(require, exports, module) {
             this.update();
         }
         update() {
-            this.dispatchEvent(new CustomEvent('change', { detail: {keystates: this.keystates} }));
+            var detail = {
+                keystates: this.keystates,
+                knobstates: this.knobs,
+                sliderstates: this.sliders
+            };
+            this.dispatchEvent(new CustomEvent('change', { detail: detail }));
         }
     };
     module.exports = KeyboardState;
