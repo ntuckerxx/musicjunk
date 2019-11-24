@@ -1,5 +1,5 @@
 
-requirejs(["midilistener", "keyboardstate"], function(MidiListener, KeyboardState){
+requirejs(["midilistener", "keyboardstate", "chordIdentifier"], function(MidiListener, KeyboardState, chordIdentifier){
     // watch for keyboard state changes.  Call "update" whenever it changes.
     var ks = new KeyboardState();
     ks.addEventListener("change", function(e) {
@@ -20,13 +20,14 @@ requirejs(["midilistener", "keyboardstate"], function(MidiListener, KeyboardStat
             $(keySelector).addClass("pressed");
             keys.push(k);
         }
-
+        // console.log("identifying chord result: ", chordIdentifier.identifyChord(keys));
         //just for fun, change the size and color of the text according to knobs and sliders
         changeStyle(knobstates[0], sliderstates[0], sliderstates[1], sliderstates[2]);
         if(keys.length == 0) {
             showDisplay("--");
         } else {
-            showDisplay(keys.join(", "));
+            var possibleChords = chordIdentifier.identifyChord(keys);
+            showDisplay(possibleChords.join(", "));
         }
     }
 
