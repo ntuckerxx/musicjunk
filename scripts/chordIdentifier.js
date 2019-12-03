@@ -113,57 +113,150 @@ define(function(require, exports, module) {
         children: {
             // minor 2nd
             1: {
-                chordQuality: {"name": "minor 2nd", "interval": true},
+                chordQuality: {"name": "minor 2nd", interval: true},
                 children: {
+                    // major 2nd
+                    2: {
+                        chordQuality: "min/add♭9",
+                        children: {
+                            // major 3rd
+                            4: {
+                                chordQuality: "min/add♭9"
+                            }
+                        }
+                    },
                     // minor 3rd
                     3: {
-                        chordQuality: "#9",
-                        // addb9 if root is bottom note (root, b9, 3rd)                         <--- should probably be default
-                        // minMaj7 if second note is root (major 7th, root, minor 3rd)
-                        // #9 if missing root note (#11, 3rd, 5th)
+                        chordQuality: 
+                            {"name": "♯9", rootOffset: 9},
+                        children: {
+                            // major 2nd
+                            2: {
+                                chordQuality: "♭9/♯11",
+                                children: {
+                                    // minor 2nd
+                                    1: {
+                                        chordQuality: "9/♯11"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    // major 3rd
+                    4: {
+                        chordQuality: "sus4/♭9",
+                        children: {
+                            // major 2nd
+                            2: {
+                                chordQuality: "sus4/♭9"
+                            }
+                        }
+                    },
+                    // tritone
+                    6: {
+                        chordQuality: "5/add♭9"
                     }
                 }
             },
             // major 2nd
             2: {
-                chordQuality : {"name": "major 2nd", "interval": true},
+                chordQuality : {"name": "major 2nd", interval: true},
                 children: {
                     // minor 2nd
                     1: {
-                        chordQuality: "min-add9",
+                        chordQuality: "min/add9",
                         children: {
                             // major 3rd
-                            3: {
-                                chordQuality: "min-add9"
+                            4: {
+                                chordQuality: "min/add9"
+                            },
+                            // tritone
+                            6: {
+                                chordQuality: "min6/9"
                             }
                         }
                     },
                     // major 2nd
                     2: {
-                        chordQuality: "add9",
+                        chordQuality: "/add9",
                         children: {
+                            // major 2nd
+                            2: {
+                                chordQuality: "9/♭5",
+                                children: {
+                                    // minor 2nd
+                                    1: {
+                                        chordQuality: "9/♯11"
+                                    }
+                                }
+                            },
                             // minor 3rd
                             3: {
                                 chordQuality: [
                                     "add9",
-                                    {"name": "min7add11", "rootOffset": 9}
-                                ] // min7add11 if it's missing it's root note (3rd, 11th, 5th, minor 7th)
+                                    {"name": "min7/add11", "rootOffset": 9}
+                                ],
+                                children: {
+                                    // major 2nd
+                                    2: {
+                                        chordQuality: "6/9"
+                                    }
+                                }
+                            },
+                            // major 3rd
+                            4: {
+                                chordQuality: "aug9"
+                            },
+                            // tritone
+                            6: {
+                                chordQuality: "9"
+                            },
+                            // perfect 5th
+                            7: {
+                                chordQuality: "maj7/9"
                             }
                         }
+                    },
+                    // perfect 4th
+                    5: {
+                        chordQuality: "sus2"
                     }
                 }
             },
             // minor 3rd
             3: {
-                chordQuality: {"name": "minor 3rd", "interval": true},
+                chordQuality: {"name": "minor 3rd", interval: true},
                 children: {
+                    // minor 2nd
+                    1: {
+                        chordQuality: "♯9",
+                        children: {
+                            // minor 3rd
+                            3: {
+                                chordQuality: "♯9",
+                                children: {
+                                    // minor 3rd
+                                    3: {
+                                        chordQuality: "7/♯9"
+                                    }
+                                }
+                            },
+                            // triton
+                            6: {
+                                chordQuality: "7/♯9"
+                            }
+                        }
+                    },
                     // minor 3rd
                     3: {
-                        chordQuality: "dim",
+                        chordQuality: [
+                            "dim",
+                            {name: "7", rootOffset: 8}
+                        ],
                         children: {
                             // minor 2nd
                             1: {
-                                chordQuality: "min#11"
+                                chordQuality: "min/♯11"
                             },
                             // minor 3rd
                             3: {
@@ -171,7 +264,7 @@ define(function(require, exports, module) {
                             },
                             // major 3rd
                             4: {
-                                chordQuality: "min7b5"
+                                chordQuality: "min7/♭5"
                             }
                         }    
                     },
@@ -179,36 +272,59 @@ define(function(require, exports, module) {
                     4: {
                         chordQuality: "minor",
                         children: {
+                            // major 2nd
                             2: {
                                 chordQuality: "min6"
                             },
                             // minor 3rd
                             3: {
                                 chordQuality: "min7"
-                            }
-                        }
-                    }
-                },
-            },
-            // major 3rd
-            4: {
-                chordQuality: {"name": "major 3rd", "interval": true},
-                children: {
-                    // major 2nd
-                    2: {
-                        chordQuality: "b5",
-                        children: {
-                            // minor 2nd
-                            1: {
-                                chordQuality: "#11"
                             },
                             // major 3rd
                             4: {
-                                chordQuality: "7b5"
+                                chordQuality: "min/maj7"
+                            }
+                        }
+                    },
+                    // tritone
+                    6: {
+                        chordQuality: ["min6", "dim7"]
+                    },
+                    // perfect 5th
+                    7: {
+                        chordQuality: ["m7", "min7/♭5"]
+                    }
+                }
+            },
+            // major 3rd
+            4: {
+                chordQuality: {"name": "major 3rd", interval: true},
+                children: {
+                    // major 2nd
+                    2: {
+                        chordQuality: "♭5",
+                        children: {
+                            // minor 2nd
+                            1: {
+                                chordQuality: "♯11",
+                                children: {
+                                    // minor 3rd
+                                    3: {
+                                        chordQuality: "7/♯11"
+                                    },
+                                    // major 3rd
+                                    4: {
+                                        chordQuality: "maj7/♯11"
+                                    }
+                                }
+                            },
+                            // major 3rd
+                            4: {
+                                chordQuality: "7/♭5"
                             },
                             // perfect 4th (augmented 3rd)
                             5: {
-                                chordQuality: "maj7b5" 
+                                chordQuality: "maj7/♭5" 
                             }
                         }
                     },
@@ -233,7 +349,7 @@ define(function(require, exports, module) {
                             },
                             // minor 2nd
                             1: {
-                                chordQuality: "b13"
+                                chordQuality: "♭13"
                             }
                         }
                     },
@@ -244,8 +360,16 @@ define(function(require, exports, module) {
                             // major 2nd
                             2: {
                                 chordQuality: "aug7"
+                            },
+                            // minor 3rd
+                            3: {
+                                chordQuality: "aug/maj7"
                             }
                         }
+                    },
+                    // tritone
+                    6: {
+                        chordQuality: "7"
                     },
                     // perfect 5th
                     7: {
@@ -255,29 +379,83 @@ define(function(require, exports, module) {
             },
             // perfect 4th
             5: {
-                chordQuality: {"name": "perfect 4th", "interval": true},
+                chordQuality: {"name": "perfect 4th", interval: true},
                 children: {
                     // minor 2nd
                     1: {
                         children: {
                             // minor 2nd
                             1: {
-                                chordQuality: "#11sus4"
+                                chordQuality: "♯11/sus4"
                             }
                         }
                     },
+                    // major 2nd
+                    2: {
+                        chordQuality: "sus4"
+                    },
+                    // perfect 4th
+                    5: {
+                        chordQuality: "7/sus4"
+                    },
                     // tritone
                     6: {
-                        chordQuality: "maj7sus4"
+                        chordQuality: "maj7/sus4"
+                    },
+                    // perfect 5th
+                    7: {
+                        chordQuality: "sus4"
                     }
                 }
             },
             // triton
             6: {
                 chordQuality: [
-                    {"name": "tritone", "interval": true},
-                    {"name": "maj7sus4", "rootOffset": 7},
+                    {"name": "tritone", interval: true},
+                    {"name": "maj7/sus4", "rootOffset": 7},
                     {"name": "7", "rootOffset": 2}
+                ],
+                children: {
+                    // minor 2nd
+                    1: {
+                        chordQuality: "5/♯11"
+                    }
+                }
+            },
+            // perfect 5th
+            7: {
+                chordQuality: {"name": "perfect 5th", interval: true},
+                children: {
+                    // minor 3rd
+                    3: {
+                        chordQuality: "5/7"
+                    },
+                    // major 3rd
+                    4: {
+                        chordQuality: "5/maj7"
+                    }
+                }
+            },
+            // minor 6th
+            8: {
+                chordQuality: {"name": "minor 6th", interval: true}
+            },
+            // major 6th
+            9: {
+                chordQuality: {"name": "major 6th", interval: true}
+            },
+            // minor 7th
+            10: {
+                chordQuality: [
+                    {name: "minor 7th", interval: true},
+                    {name: "7"}
+                ]
+            },
+            // major 7th
+            11: {
+                chordQuality: [
+                    {name: "major 7th", interval: true},
+                    {name: "maj7"}
                 ]
             }
         }
