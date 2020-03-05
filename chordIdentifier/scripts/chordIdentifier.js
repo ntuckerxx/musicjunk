@@ -9,12 +9,76 @@ define(function(require, exports, module) {
         return result;
     }
     
+    function getMelodyNote(inputArray) {
+        let melodyNote = inputArray[inputArray.length-1];
+        return melodyNote;
+    };
+
+    function getNoteName(n) {
+        return noteLetters[n % 12];
+    };
+
+
+    function addToTree(intervalArray, chordQuality, offset) {
+        var node = chordTree;
+        let i = 0;
+        for (i=0; i<intervalArray.length; i+=1) {
+            var nextInterval = intervalArray[i];
+            // console.log("nextInterval: ", nextInterval);
+            if (!node.children) {
+                node.children = {};
+            }
+            if (!node.children[nextInterval]) {
+                node.children[nextInterval] = {};
+            }
+            node = node.children[nextInterval];          
+            // console.log("current node: ", node);
+
+        }
+        
+        if (node.chordQuality) {
+            // console.log("node.chordQuality = true");
+            // console.log("node.chordQuality: ", node.chordQuality);
+            if (Array.isArray(node.chordQuality)) {
+                // console.log("node.chordQuality is an array");
+                if (offset) {
+                    node.chordQuality.push({"name": chordQuality, "rootOffset": offset});
+                } else {
+                    node.chordQuality.push(chordQuality);
+                }
+            } else if (typeof(node.chordQuality === "string")) {
+                // console.log("node.chordQuality is a string");
+                let existingChordQuality = node.chordQuality;
+                node.chordQuality = [];
+                node.chordQuality.push(existingChordQuality);
+                if (offset) {
+                    node.chordQuality.push({"name": chordQuality, "rootOffset": offset});
+                } else {
+                    node.chordQuality.push(chordQuality);
+                }
+            }
+        } else {
+            console.log("creating new chordQuality where non existed before.");
+            if (offset) {
+                node.chordQuality = {"name": chordQuality, "rootOffset": offset};
+            } else {
+                node.chordQuality = chordQuality;
+            }
+        }
+        console.log("HERE IS YOUR NEW CHORD TREE: const chordTree = ", JSON.stringify(chordTree, null, "    "), chordTree);
+        
+        return chordTree;
+    };
+
+
     function identifyChord(inputArray) {
+        
+
         extendedArray = removeDuplicates(inputArray.map(x => x%12)).sort(function(a,b){return a-b});
     
     
-        console.log("inputArray = ", inputArray)
-        console.log("extendedArray = ", extendedArray);
+        // console.log("inputArray = ", inputArray)
+        // console.log("extendedArray = ", extendedArray);
         let numSlices = extendedArray.length;
         
     
@@ -25,7 +89,7 @@ define(function(require, exports, module) {
     
     
     
-        console.log("extendedArray = ", extendedArray);
+        // console.log("extendedArray = ", extendedArray);
         
         let intervalArray = [];
         for (i=0; i<(extendedArray.length-1); i++) {
@@ -36,25 +100,25 @@ define(function(require, exports, module) {
         for (i=0; i<(numSlices); i++) {
             treeRoutes[i] = intervalArray.slice(i, (numSlices-1+i));
         }
-        console.log("treeRoutes: ", treeRoutes);
+        // console.log("treeRoutes: ", treeRoutes);
     
         results = [];
         for (var i in treeRoutes) {
-            console.log("traversing route: ", treeRoutes[i]);
+            // console.log("traversing route: ", treeRoutes[i]);
             result = traverseTree(treeRoutes[i]);
-            console.log("current result: ", result);
+            // console.log("current result: ", result);
             if (result) {
                 var firstNote = extendedArray[i];
                 var qualities = getChordQualities(result.chordQuality);
-                console.log("qualities: ", qualities);
+                // console.log("qualities: ", qualities);
                 for (var j in qualities) {
-                    var rootNote;        
+                    var rootNote;
                     if (qualities[j].rootOffset) {
                         rootNote = firstNote + qualities[j].rootOffset;
                     } else {
                         rootNote = firstNote;
                     }                
-                    console.log("rootNote: ", rootNote);
+                    // console.log("rootNote: ", rootNote);
                     var letter = noteLetters[rootNote % 12];
                     var quality = qualities[j].name;
                     var maybeSpace = qualities[j].interval ? " " : "";
@@ -83,12 +147,14 @@ define(function(require, exports, module) {
             }
         }
         return result
-    }
+    };
     
     
     module.exports = {
         identifyChord: identifyChord,
-        traverseTree: traverseTree
+        traverseTree: traverseTree,
+        getNoteName: getNoteName,
+        addToTree: addToTree
     };
     
     
@@ -127,8 +193,10 @@ define(function(require, exports, module) {
                     },
                     // minor 3rd
                     3: {
-                        chordQuality: 
-                            {"name": "♯9", rootOffset: 9},
+                        chordQuality: [
+                            "add♭9",
+                            {"name": "add♯9", rootOffset: 9},
+                        ],
                         children: {
                             // major 2nd
                             2: {
@@ -182,7 +250,7 @@ define(function(require, exports, module) {
                         children: {
                             // major 2nd
                             2: {
-                                chordQuality: "9/♭5",
+                                chordQuality: "9/♯11",
                                 children: {
                                     // minor 2nd
                                     1: {
@@ -200,6 +268,14 @@ define(function(require, exports, module) {
                                     // major 2nd
                                     2: {
                                         chordQuality: "6/9"
+                                    },
+                                    // minor 3rd
+                                    3: {
+                                        chordQuality: "9"
+                                    },
+                                    // major 3rd
+                                    4: {
+                                        chordQuality: "maj9"
                                     }
                                 }
                             },
@@ -247,6 +323,16 @@ define(function(require, exports, module) {
                             }
                         }
                     },
+                    // major 2nd
+                    2: {
+                        chordQuality: "min/add11",
+                        children: {
+                            // major 2nd
+                            2: {
+                                chordQuality: "min/add11"
+                            }
+                        }
+                    },
                     // minor 3rd
                     3: {
                         chordQuality: [
@@ -272,6 +358,10 @@ define(function(require, exports, module) {
                     4: {
                         chordQuality: "minor",
                         children: {
+                            // minor 2nd
+                            1: {
+                                chordQuality: "min/♭13"
+                            },
                             // major 2nd
                             2: {
                                 chordQuality: "min6"
@@ -285,6 +375,10 @@ define(function(require, exports, module) {
                                 chordQuality: "min/maj7"
                             }
                         }
+                    },
+                    // perfect 4th
+                    5: {
+                        chordQuality: "min/♭13"
                     },
                     // tritone
                     6: {
@@ -345,7 +439,13 @@ define(function(require, exports, module) {
                             },
                             // major 2nd
                             2: {
-                                chordQuality: "6"
+                                chordQuality: "6",
+                                children: {
+                                    // minor 2nd
+                                    1: {
+                                        chordQuality: "7/add13"
+                                    }
+                                }
                             },
                             // minor 2nd
                             1: {
@@ -364,6 +464,16 @@ define(function(require, exports, module) {
                             // minor 3rd
                             3: {
                                 chordQuality: "aug/maj7"
+                            }
+                        }
+                    },
+                    // perfect 4th
+                    5: {
+                        chordQuality: "6",
+                        children: {
+                            // minor 2nd
+                            1: {
+                                chordQuality: "7/add13"
                             }
                         }
                     },
