@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/App.jsx';
 const chordIdentifier = require('./chordIdentifier');
+const synth = require('./synthclient');
+window.synth = synth; // for using in console
 
 console.log('fark');
 ReactDOM.render(

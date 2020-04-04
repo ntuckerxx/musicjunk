@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-const KeyboardState = require('./keyboardstate');
+const KeyboardState = require('../keyboardstate');
 var ks = new KeyboardState();
 
 // ks.addEventListener("change", function(e) {
