@@ -5,18 +5,66 @@ const chordIdentifier = require('./chordIdentifier');
 const synth = require('./synthclient');
 window.synth = synth; // for using in console
 const MidiListener = require('./midilistener');
-
+let program = 0;
 const ml = new MidiListener();
 ml.addEventListener('midi', (e) => {
-  if(e.detail.data[0] == 144) {
-    console.log("noteOn");
-    // note on
-    synth.noteOn(0, e.detail.data[1], e.detail.data[2]);
-  } else if(e.detail.data[0] == 128) {
-    // note off
-    synth.noteOff(0, e.detail.data[1]);
-  } else {
-    console.log("unhandled midi: ", e.detail.data);
+  switch(e.detail.data[0]) {
+    case 144:
+      console.log("noteOn");
+      // note on
+      synth.noteOn(0, e.detail.data[1], e.detail.data[2]);
+      break;
+    case 128:
+      // note off
+      synth.noteOff(0, e.detail.data[1]);
+      break;
+    case 153:
+      //pad on
+      switch(e.detail.data[1]) {
+        case 40:
+          synth.equaltuning();
+          break;
+      case 36:
+          synth.pythtuning();
+          break;
+      case 51:
+          synth.badtuning();
+          break;
+    }
+    case 137:
+      //pad off
+      break;
+    case 176:
+      switch(e.detail.data[1]) {
+        case 21:
+          synth.tweakinterval(7, e.detail.data[2]);
+          break;
+        case 26:
+          synth.tweakinterval(3, e.detail.data[2]);
+          break;
+        case 27:
+          synth.tweakinterval(6, e.detail.data[2]);
+          break;
+        case 28:
+          synth.tweakinterval(10, e.detail.data[2]);
+          break;
+        case 103:
+          if(e.detail.data[2] == 127) {
+            program--;
+            synth.program(0, program).then(() => { console.log("program set to ", program);});
+          }
+          break;
+        case 102:
+          if(e.detail.data[2] == 127) {
+            program++;
+            synth.program(0, program).then(() => { console.log("program set to ", program);});
+          }
+          break;
+      }
+      break;
+    default:
+      console.log("unhandled midi: ", e.detail.data);
+      break;
   }
 });
 

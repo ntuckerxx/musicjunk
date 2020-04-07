@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"net/http"
 
@@ -18,16 +19,50 @@ type note struct {
 	Velocity uint8 `json:"velocity"`
 }
 
+type tuningParams struct {
+	Root   int         `json:"root"`
+	Octave [12]float64 `json:"octave"`
+}
+
+type programParams struct {
+	Channel uint8 `json:"channel"`
+	Program uint8 `json:"program"`
+}
+
 type tuning struct {
 	id     fluidsynth.TuningId
 	name   string
 	values [128]float64
 }
 
+func setTuning(synth fluidsynth.Synth, t tuningParams) error {
+	tid := fluidsynth.TuningId{Bank: 0, Program: 0}
+	var values [128]float64
+
+	for i := 0; i < 128; i++ {
+		if i > 0 {
+			interval := t.Octave[(i-1)%12]
+			values[i] = values[i-1] + interval
+		} else {
+			values[i] = 0
+		}
+	}
+
+	log.Printf("Activating key tuning: %#v", values)
+	result := synth.ActivateKeyTuning(tid, "surftuning", values, true)
+	if result != 0 {
+		return fmt.Errorf("Failed to activate key tuning: %d", result)
+	}
+	synth.ActivateTuning(0, tid, true)
+
+	return nil
+}
+
 func main() {
 
 	fmt.Printf("creating settings\n")
 	settings := fluidsynth.NewSettings()
+	settings.SetNum("synth.gain", float64(0.7))
 	settings.SetNum("synth.sample-rate", float64(audioFrequency)) // this should match your openAL config
 	// customise more settings here if you like; see "FluidSettings" in the documentation for a full list
 	fmt.Printf("starting fluidsynth\n")
@@ -59,5 +94,34 @@ func main() {
 		resultItem := gin.H{"message": "ok"}
 		c.JSON(200, resultItem)
 	})
+	r.POST("/program", func(c *gin.Context) {
+		var j programParams
+		if err := c.ShouldBindJSON(&j); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		synth.ProgramChange(j.Channel, j.Program)
+		resultItem := gin.H{"message": "ok"}
+		c.JSON(200, resultItem)
+	})
+	r.POST("/tuning", func(c *gin.Context) {
+		var json tuningParams
+		if err := c.ShouldBindJSON(&json); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		resultItem := gin.H{}
+		resultCode := 200
+		err := setTuning(synth, json)
+		if err != nil {
+			resultCode = 500
+			resultItem["error"] = err.Error()
+		} else {
+			resultItem["message"] = "ok"
+		}
+		c.JSON(resultCode, resultItem)
+	})
+
 	r.Run() // listen and serve on 0.0.0.0:8080
 }
